@@ -15,7 +15,7 @@ import { useDispatch } from "react-redux";
 import { addFilterData } from "../action/filterAction";
 import { filterCardData } from "../action/cardAction";
 import { useSelector } from "react-redux";
-
+import moment from "moment";
 function Filter(props) {
   const cardArr = useSelector((state) => state.card?.CardList);
   const dispatch = useDispatch();
@@ -28,14 +28,15 @@ function Filter(props) {
       selfPaced: props.cardObj.isLable,
     };
     dispatch(addFilterData(data));
-    const filterData = cardArr.filter((obj, i) => {
-      let selfPacedLabel = props.cardObj.isLable ? "Self paced" : "";
 
+    const filterData =cardArr.filter((obj, i) => {
+      let selfPacedLabel = props.cardObj.isLable ? "Self paced" : false;
+       var string = moment(props.cardObj.date, "DD/MM/YYYY").format("Do MMM, YYYY");
       return (
-        obj["Course Name"] === props.cardObj.course ||
-        obj["Child Subject"] === props.cardObj.childSubject ||
+        obj["Course Name"].toLowerCase() === (props.cardObj.course!=="" && props.cardObj.course.toLowerCase()) ||
+        obj["Child Subject"].toLowerCase() ===(props.cardObj.childSubject!=="" && props.cardObj.childSubject.toLowerCase()) ||
         obj["Next Session Date"] === selfPacedLabel ||
-        obj["Next Session Date"] === props.cardObj.date
+        obj["Next Session Date"] === string
       );
     });
 
