@@ -4,50 +4,64 @@ import Header from "./Header";
 import Filter from "./Filter";
 import CardInfo from "./CardInfo";
 import axios from "axios";
-import { addCardData } from "../action/cardAction";
+import { addCardData, filterCardData } from "../action/cardAction";
 import { useDispatch } from "react-redux";
-
+import { useSelector } from "react-redux";
 const Course = () => {
   const [course, setCourse] = React.useState("");
   const [childSubject, setChildSubject] = React.useState("");
   const [date, setDate] = React.useState(null);
   const [isLable, setIsLable] = React.useState(false);
   const dispatch = useDispatch();
-  const [cardList, setCardList] = useState([]);
-
+  const [isDisabled, setIsDisabled] = useState(true);
+  const cardArr = useSelector((state) => state.card?.CardList);
+  
   let data = "Self Paced";
   useEffect(() => {
     axios
       .get("https://nut-case.s3.amazonaws.com/coursessc.json")
       .then((res) => {
-        setCardList(res.data);
         dispatch(addCardData(res.data));
       })
       .catch((err) => {});
-  }, []);
-
-  const handleChange = (e, type) => {
+  }, []); 
+  useEffect(()=>{
+    checkValidation();
+  },[course, childSubject, date, isLable])
+  const checkValidation =() =>{
+   
+    if (
+      course === "" &&
+      childSubject === "" &&
+      date === null &&
+      isLable === false
+    ){
+      setIsDisabled(true);
+      dispatch(filterCardData(cardArr))
+    }
+    else{
+      setIsDisabled(false);
+    }
+  };
+  const handleChange =  (e, type) => {
+    checkValidation();
     if (type === "course Name") {
-      // let value =
-      //   e.target.value == "" ? null : e.target.value !== null && e.target.value;
       setCourse(e.target.value);
     } else if (type === "childSubject") {
-      // let value =
-      //   e.target.value == "" ? null : e.target.value !== null && e.target.value;
-      setChildSubject(e.target.value);
+        setChildSubject(e.target.value);
     } else if (type === "date") {
-      // var string = moment(e, "DD/MM/YYYY").format("Do MMM, YYYY");
-      setDate(e);
+        setDate(e);
     } else if (type === "lable") {
-      setIsLable(e.target.checked);
+       setIsLable(e.target.checked);
     }
+    
   };
   let cardObj = { course, childSubject, date, isLable };
   return (
     <div className="course-section">
       <div className="header-filter-wrapper">
         <Header />
-        <Filter label={data} cardObj={cardObj} handleChange={handleChange} />
+        <Filter label={data} cardObj={cardObj} handleChange={handleChange} disableButton={isDisabled}/>
       </div>
 
       <CardInfo />

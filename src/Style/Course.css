@@ -176,3 +176,10 @@
   align-items: center;
   height: 400px;
 }
+
+.button-disable{
+  color: black !important;
+  pointer-events: auto !important;
+  cursor: not-allowed !important;
+  background-color: #ddd !important;
+}

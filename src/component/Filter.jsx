@@ -17,30 +17,44 @@ import { filterCardData } from "../action/cardAction";
 import { useSelector } from "react-redux";
 import moment from "moment";
 function Filter(props) {
+
+  
   const cardArr = useSelector((state) => state.card?.CardList);
   const dispatch = useDispatch();
 
   const handleSearch = () => {
-    const data = {
-      course: props.cardObj.course,
-      childSubject: props.cardObj.childSubject,
-      date: props.cardObj.date,
-      selfPaced: props.cardObj.isLable,
-    };
-    dispatch(addFilterData(data));
+   
+   
+      const data = {
+        course: props.cardObj.course,
+        childSubject: props.cardObj.childSubject,
+        date: props.cardObj.date,
+        selfPaced: props.cardObj.isLable,
+      };
 
-    const filterData =cardArr.filter((obj, i) => {
-      let selfPacedLabel = props.cardObj.isLable ? "Self paced" : false;
-       var string = moment(props.cardObj.date, "DD/MM/YYYY").format("Do MMM, YYYY");
-      return (
-        obj["Course Name"].toLowerCase() === (props.cardObj.course!=="" && props.cardObj.course.toLowerCase()) ||
-        obj["Child Subject"].toLowerCase() ===(props.cardObj.childSubject!=="" && props.cardObj.childSubject.toLowerCase()) ||
-        obj["Next Session Date"] === selfPacedLabel ||
-        obj["Next Session Date"] === string
-      );
-    });
+      dispatch(addFilterData(data));
 
-    dispatch(filterCardData(filterData));
+      const filterData = cardArr.filter((obj, i) => {
+        let selfPacedLabel = props.cardObj.isLable ? "Self paced" : false;
+        var string = moment(props.cardObj.date, "DD/MM/YYYY").format(
+          "Do MMM, YYYY"
+        );
+
+        return (
+          obj["Course Name"].toLowerCase() ===
+            (props.cardObj.course !== "" &&
+              props.cardObj.course.toLowerCase()) ||
+          obj["Child Subject"].toLowerCase() ===
+            (props.cardObj.childSubject !== "" &&
+              props.cardObj.childSubject.toLowerCase()) ||
+          obj["Next Session Date"] === selfPacedLabel ||
+          obj["Next Session Date"] === string
+        );
+      });
+      console.log("filterData value done", filterData);
+
+      dispatch(filterCardData(filterData));
+    
   };
 
   return (
@@ -93,10 +107,11 @@ function Filter(props) {
         />
       </FormGroup>
       <Button
+        disabled={props.disableButton}
         variant="contained"
         size="small"
         onClick={handleSearch}
-        className="button-color"
+        className={props.disableButton? "button-disable" :"button-color" }
       >
         Search
       </Button>

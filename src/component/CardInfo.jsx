@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 
 const CardInfo = (props) => {
-  const data = useSelector((state) => state.filter);
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
@@ -17,9 +16,12 @@ const CardInfo = (props) => {
   const [cardList, setCardList] = useState(cardArr);
   useEffect(() => {
     isFilter ? setCardList(FilterCardList) : setCardList(cardArr);
-  }, [isFilter, FilterCardList]);
+    isFilter ? setItemOffset(0) : setItemOffset(itemOffset);           
+  }, [isFilter, FilterCardList , cardArr]);
   useEffect(() => {
+    
     const endOffset = itemOffset + itemsPerPage;
+    
     setCurrentItems(cardList.slice(itemOffset, endOffset));
     setPageCount(Math.ceil(cardList.length / itemsPerPage));
   }, [itemOffset, itemsPerPage, cardList]);
@@ -44,7 +46,7 @@ const CardInfo = (props) => {
           <Grid container spacing={3}>
             {currentItems.map((obj, i) => {
               return (
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid key={i} item xs={12} sm={6} md={4}>
                   <Card className="Info-data">
                     <Grid container spacing={2}>
                       <Grid item xs={6}>
